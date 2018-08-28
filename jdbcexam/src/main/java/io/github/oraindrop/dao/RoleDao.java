@@ -143,4 +143,31 @@ public class RoleDao {
 		return count;
 	}
 	
+	public int UpdateRole(Role role) {
+		int count = 0;
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String sql = "UPDATE role SET description = ? WHERE role_id = ?";
+		
+		try(Connection conn = DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			PreparedStatement ps = conn.prepareStatement(sql);	
+			) {
+			
+			ps.setString(1, role.getDescription());
+			ps.setInt(2, role.getRoleId());
+			
+			count = ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		
+		return count;
+	}
+	
 }
