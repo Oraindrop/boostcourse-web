@@ -59,7 +59,31 @@ public class RoleDao {
 				}
 			}	
 		}		
-		
 		return role;		
 	}
+	
+	public int addRole(Role role) {
+		int count = 0;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		String sql = "INSERT INTO role (role_id, description) VALUES (? , ?)";
+		
+		//try-with resource
+		try (Connection conn = DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			PreparedStatement ps = conn.prepareStatement(sql)){
+			ps.setInt(1, role.getRoleId());
+			ps.setString(2, role.getDescription());
+			
+			count = ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+	
 }
