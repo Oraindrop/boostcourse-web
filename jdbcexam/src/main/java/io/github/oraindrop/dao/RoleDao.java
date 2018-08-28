@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.oraindrop.dto.Role;
 
@@ -83,6 +85,61 @@ public class RoleDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return count;
+	}
+	
+	public List<Role> getRoles(){
+		List<Role> roleList = new ArrayList<>();
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String sql = "SELECT role_id, description FROM role";
+		
+		try (Connection conn = DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			PreparedStatement ps = conn.prepareStatement(sql)){
+			try(ResultSet rs = ps.executeQuery();) {
+				while(rs.next()) {
+					int roleId = rs.getInt(1);
+					String roleDesc = rs.getString(2);
+					roleList.add(new Role(roleId, roleDesc));					
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		
+		return roleList;		
+	}
+	
+	public int deleteRole(int roleId) {
+		int count = 0;
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String sql = "DELETE FROM role WHERE role_id = ?";
+		
+		try(Connection conn = DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			PreparedStatement ps = conn.prepareStatement(sql)
+			){
+			ps.setInt(1, roleId);
+			count = ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 		return count;
 	}
 	
